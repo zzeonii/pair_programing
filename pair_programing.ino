@@ -1,8 +1,13 @@
 const int LED = 6;
 const int BUTTON = 2;
+
 int buttonState = 0;
 int lastButtonState = 0;
 int buttonPushCounter = 0;
+
+int ledState = LOW;
+unsigned long previousMillis = 0;
+const long interval = 1000;
 
 void setup() {
   pinMode(LED, OUTPUT);
@@ -11,21 +16,18 @@ void setup() {
 }
 
 void loop() {
-  //blink();
+  
   button();
-  Serial.println(buttonPushCounter);
-  if ((buttonPushCounter % 2) == 1)
+  if ((buttonPushCounter%2)==1)
     blink();
-  if ((buttonPushCounter % 2) == 0)
-    no_blink();
-}
+  else{
+    digitalWrite(LED, LOW);
+  }
 
-void blink() {
-  digitalWrite(LED, HIGH);
-}
 
-void no_blink() {
-  digitalWrite(LED, LOW);
+  if ((millis() % 500) == 0) {
+    Serial.println(buttonPushCounter);
+  }
 }
 
 void button() {
@@ -39,3 +41,24 @@ void button() {
 
   lastButtonState = buttonState;
 }
+
+void blink() {
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+
+    if (ledState == LOW) {
+      ledState = HIGH;
+    } else {
+      ledState = LOW;
+    }
+
+    digitalWrite(LED, ledState);
+  }
+  // if ((millis() % 200) == 0) {
+  //   Serial.println((String) "currentMillis" + currentMillis);
+  //   Serial.println((String) "previousMillis" + previousMillis);
+  // }
+}
+
